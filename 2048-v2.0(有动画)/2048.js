@@ -1,11 +1,12 @@
 $(function(){
 
-  var size = 4;
+  var size = 4;//2048的规模,稍微修改size,array以及html中的布局,就能实现5×5,6×6...的2048
 
   var array = [[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]];
 
-  var transition_duration = 200;
+  var transition_duration = 200;//每次动画执行的时间(ms),修改时要连带的修改css中.transition中的属性才能有好的效果
 
+  //在空的位置随机产生一个数值为2的方块.
   function num_produce(){
     var null_array = [];
     _.each(array,function(value,index){
@@ -32,6 +33,7 @@ $(function(){
 
   }
 
+  //对二维数组的矩阵形式进行转置
   function array_transposition(array){
     var array_original = array;
     var array_copy = [[],[],[],[]];
@@ -44,19 +46,21 @@ $(function(){
     return array_copy;
   }
 
-  function array_reset(){
-    $(".move>li").html("").css("background","#bbb");
-    _.each(array,function(value,index){
-      var one_index = index;
-      _.each(value,function(value,two_index){
-        var index = size*one_index + two_index;
-        if(value != 0){
-          $(".move>li:nth("+index+")").html(value).css("background",color_change(value));
-        }
-      });
-    });
-  }
+  //逻辑层的显示代码,对于动画版不需要.
+  // function array_reset(){
+  //   $(".move>li").html("").css("background","#bbb");
+  //   _.each(array,function(value,index){
+  //     var one_index = index;
+  //     _.each(value,function(value,two_index){
+  //       var index = size*one_index + two_index;
+  //       if(value != 0){
+  //         $(".move>li:nth("+index+")").html(value).css("background",color_change(value));
+  //       }
+  //     });
+  //   });
+  // }
 
+  //根据对应的数值得到对应的颜色.
   function color_change(num){
     switch(num){
       case 2:return "#dacccc";break;
@@ -77,6 +81,7 @@ $(function(){
   num_produce();
   num_produce();
 
+  //核心代码,关于移动的相关代码.
   function array_move(direction){
     var direction_flag_1 = 0;
     var direction_flag_2 = 0;
@@ -90,17 +95,17 @@ $(function(){
     }
 
 
-    if(direction_flag_2 == 1){
+    if(direction_flag_2 == 1){//对于上下移动时先对二维数组进行转置.
       array = array_transposition(array);
     }
 
-    var array_move =[];
+    var array_move =[];//移动后最终得到的二维数组
 
     _.each(array,function(value,index){
 
-      var one_index = index;
-      var full_array = [];
-      var full_index_array = [];
+      var one_index = index;//二维数组对应矩阵的行数表示
+      var full_array = [];//二维数组单行中非0项的数值组成的数组
+      var full_index_array = [];//二维数组单行中非0项的列数表示组成的数组(旧的坐标)
       _.each(value,function(value,two_index){
         if(value != 0){
           full_array.push(value);
@@ -108,8 +113,8 @@ $(function(){
         }
       });
 
-      var final_array = [];
-      var final_index_array = [];
+      var final_array = [];//对full_array进行合并之后的数组.
+      var final_index_array = [];//对应full_index_array在final_array中新的列数表示组成的数组(新的坐标)
       if(direction_flag_1 == 0){
         _.each(full_array,function(value,index,list){
           if(index != 0){
@@ -139,7 +144,7 @@ $(function(){
       }
 
       else if(direction_flag_1 == 1){
-        _.reduceRight(full_array,function(memo,value,index,list){
+        _.reduceRight(full_array,function(memo,value,index,list){//当向右移动时,数组需要反过来循环进行合并.
           if(index != list.length-1){
             if(list[index] == list[index+1]){
               list[index] = 0;
@@ -166,7 +171,7 @@ $(function(){
         },[]);
       }
 
-
+      //对final_array补0使其长度等于原二维数组的长度.
       ~function(){
         if(final_array.length < size){
           if(direction_flag_1 == 0){
@@ -179,14 +184,14 @@ $(function(){
         }
       }();
 
-
+      //动画执行的相关函数
       function move_animate(value,index){
-        var distance = 110*(full_index_array[index] - value);
+        var distance = 110*(full_index_array[index] - value);//移动的距离
         if(distance != 0){
           if(direction_flag_2 == 0){
-            var old_li = size*one_index + full_index_array[index];
-            var new_li = size*one_index + final_index_array[index];
-            var new_value = final_array[final_index_array[index]];
+            var old_li = size*one_index + full_index_array[index];//移动前的li在ul中的位置
+            var new_li = size*one_index + final_index_array[index];//移动后的li在ul中的位置
+            var new_value = final_array[final_index_array[index]];//移动后新的位置li该显示的值
             var move_direction = "translateX";
           }
           else if(direction_flag_2 == 1){
@@ -217,11 +222,11 @@ $(function(){
       }
 
 
-      array_move.push(final_array);
+      array_move.push(final_array);//把每行得到数组放到array_move中得到最终的二维数组.
 
     });
 
-    if(array.toString() != array_move.toString()){
+    if(array.toString() != array_move.toString()){//通过字符串判断新数组和旧数组是否相等
       array = array_move;
       if(direction_flag_2 == 1){
         array = array_transposition(array);
