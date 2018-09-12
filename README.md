@@ -4,7 +4,8 @@
 [https://wwk321.github.io/demo/2048/2048.html](https://wwk321.github.io/demo/2048/2048.html)
 
 ### 控制
-**w a s d** 控制移动
+**w a s d** 控制移动:flushed:
+
 
 ### 介绍
 * 分为**有动画**和**没动画**两个版本,**没动画的版本**更方便看逻辑层的代码实现;
