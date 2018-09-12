@@ -1,7 +1,7 @@
 # 2048-js
 
 ### Demo地址:
-[https://wwk321.github.io/demo/2048/2048.html](https://wwk321.github.io/demo/2048/2048.html)
+[https://dawkey.github.io/demo/2048/2048.html](https://dawkey.github.io/demo/2048/2048.html)
 
 ### 控制
 **w a s d** 控制移动:flushed:
